@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+
+    <!-- JS -->
+    <script type="text/javascript" src="{{ url_for('static', filename = 'main.js') }}"></script>
+
+    <title>Dynamic Personas</title>
+
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/static/img/favicon.ico" />
+
+  </head>
+  <body>
+    <div class="container">
+        <div class="row header">
+            <div class="col-12 col-md-6 offset-md-3 text-center pt-50">
+                <h1 id="nameText"></h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col" id="userPointer">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-10 offset-md-1" id="users">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 offset-md-3 text-center pt-50">
+                <a href="/page-6">Click here to continue</a>
+                <br><br><br>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        // username + pointer
+        const name = window.localStorage.getItem("username");
+        document.getElementById("nameText").innerHTML = "This is all ConneXion users, including you, " + name + "!";
+        document.getElementById("userPointer").innerHTML = name + ", this is you ⮕";
+
+        // users
+        let items = {{ data }};
+
+        items.forEach(function (item) {
+            var user = document.createElement('div');
+            user.classList.add("user");
+            user.innerHTML =    "<img src='/static/img/MarioKart8-"+item+".png' width='18px'>"
+            document.getElementById('users').appendChild(user);
+        });
+    </script>
+  </body>
+</html>

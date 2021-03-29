@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+
+    <!-- JS -->
+    <script type="text/javascript" src="{{ url_for('static', filename = 'main.js') }}"></script>
+
+    <title>Dynamic Personas</title>
+
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/static/img/favicon.ico" />
+
+  </head>
+  <body>
+    <div class="container">
+        <div class="row header">
+            <div class="col-12 col-md-6 offset-md-3 text-center pt-50">
+                <h1>Can you guess which personas do you belong to as a user of ConneXion?</h1>
+                <div class="pt-50">
+                    <div><input type="radio" id="whichPersonas1" name="whichPersonas" value="wrong">
+                    <label for="whichPersonas1">1 - Red</label></div>
+                    <div><input type="radio" id="whichPersonas2" name="whichPersonas" value="wrong">
+                    <label for="whichPersonas2">2 - Purple</label></div>
+                    <div><input type="radio" id="whichPersonas3" name="whichPersonas" value="true">
+                    <label for="whichPersonas3">3 - Green</label></div>
+                    <div><input type="radio" id="whichPersonas4" name="whichPersonas" value="wrong">
+                    <label for="whichPersonas4">4 - Blue</label></div>
+                </div>
+                <br><br><br>
+                <button onclick="whichPersona()">
+                  Click here to check your answer
+                </button>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function whichPersona() {
+          if(document.getElementById("whichPersonas2").checked) {
+            window.localStorage.setItem("whichPersonaAnswered", "right");
+          } else {
+            window.localStorage.setItem("whichPersonaAnswered", "wrong");
+          }
+
+          window.location.href="/page-14";
+        }
+    </script>
+  </body>
+</html>

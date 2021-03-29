@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+
+    <!-- JS -->
+    <script type="text/javascript" src="{{ url_for('static', filename = 'main.js') }}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/snap.svg/0.3.0/snap.svg-min.js"></script>
+
+    <title>Dynamic Personas</title>
+
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/static/img/favicon.ico" />
+
+  </head>
+  <body>
+    <div class="container">
+        <div class="row header">
+            <div class="col-12 col-md-6 text-center pt-50 align-self-center">
+                <div id="svg-wrapper">
+                  <svg id="svg" viewBox="0 0 1000 600"></svg>  
+                </div>
+                <div>
+                    <button id="draw">Animate graph</button>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 text-center pt-50">
+                <h1>The elbow method</h1>
+                <p>The elbow method helps select the optimal number of clusters by fitting the model with a range of values for 𝐾. If the line chart resembles an arm, then the “elbow” (the point of inflection on the curve) is a good indication that the underlying model fits best at that point. In the visualizer “elbow” will be annotated with a dashed line. In reality, this is only an initial guess.</p>
+                <small>Source: https://towardsdatascience.com/kmeans-hyper-parameters-explained-with-examples-c93505820cd3 and https://www.scikit-yb.org/en/latest/api/cluster/elbow.html</small>
+                <br><br><br>
+                <a href="/page-10">Click here to continue</a>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var price = [0, -315, -200, -140, -130, -125, -120, -115, -110];
+        var chartH = $('#svg').height();
+        var chartW = $('#svg').width();
+
+        var prices = [];
+        for (i = 0; i < price.length; i++) {
+            prices[i] = price[i] + $('#svg').height();
+        }
+
+        function draw() {
+            //DEFINE SNAP SVG AND DETERMINE STEP NO.
+            var paper = Snap('#svg');
+            var steps = prices.length;
+
+            // EVENLY DISTRIBUTE OUR POINTS ALONG THE X AXIS
+
+            function step(i, chartW) {
+                return chartW / prices.length * i;
+            }
+
+            var points = [];
+            var breakPointsX = [];
+            var breakPointsY = [];
+            var point = {};
+
+            for (i = 1; i < prices.length; i++) {
+
+                //CALCULATE CURRENT POINT
+
+                var currStep = step(i, chartW);
+                var y = prices[i];
+                point.x = Math.floor(currStep);
+                point.y = y;
+
+                //CALCULATE PREVIOUS POINT
+
+                var prev = i - 1;
+                var prevStep = step(prev, chartW);
+                var prevY = prices[prev];
+                point.prevX = Math.floor(prevStep);
+                point.prevY = prevY;
+                if (point.prevX === 0 || point.prevY === 0){
+                  point.prevX = -800;
+                  point.prevY = chartH;
+                }
+                // SAVE PATH TO ARRAY
+                points[i] = " M" + point.prevX + "," + point.prevY + " L" + point.x + "," + point.y;
+
+                // SAVE BREAKPOINTS POSITION
+
+                var r = 30;
+                breakPointsX[i] = point.x;
+                breakPointsY[i] = point.y;
+            }
+
+            // DRAW LINES
+
+            for (i = 0; i < points.length; i++) {
+                var myPath = paper.path(points[i]);
+                var len = myPath.getTotalLength();
+                myPath.attr({
+                    'stroke-dasharray': len,
+                        'stroke-dashoffset': len,
+                        'stroke': 'white',
+                        'stroke-linecap': 'round',
+                        'stroke-width': 4,
+                        'stroke-linejoin': 'round',
+                        'id': 'myLine' + i,
+                        'class': 'line'
+                });
+            }
+            // DRAW BREAKPOINTS
+            for (i = 0; i < points.length; i++) {
+                var circle = paper.circle(breakPointsX[i], breakPointsY[i], 5);
+                circle.attr({
+                    'fill': '#B6C649',
+                        'stroke': '#B6C649',
+                        'stroke-width': 3,
+                        'id': 'myCirc' + i,
+                        'class':'breakpoint'
+                });
+            }
+          // DRAW COORDINATE SYSTEM
+            var xAxis = paper.path('M0,'+chartH+'L'+chartW+","+chartH);
+            var yAxis = paper.path('M0,'+chartH+'L0,0');
+          
+          var xOff = xAxis.getTotalLength();
+          var yOff = yAxis.getTotalLength();
+          var start = (prices.length*250+"ms");
+
+          yAxis.attr({
+            'stroke':'white',
+            'stroke-width':1,
+            'stroke-dasharray':yOff,
+            'stroke-dashoffset':yOff,
+            'id':'yAxis'
+          });
+          xAxis.attr({
+            'stroke':'white',
+            'stroke-width':1,
+            'stroke-dasharray':xOff,
+            'stroke-dashoffset':xOff,
+            'id':'xAxis'
+          });
+          // console.log(start);
+          $('#yAxis').css({
+            '-webkit-transition-delay':start,
+            '-webkit-transition':'all 200ms ease-in'
+          });
+           $('#xAxis').css({
+            '-webkit-transition-delay':start,
+            '-webkit-transition':'all 200ms ease-in'
+          });
+          $('#xAxis').animate({
+            'stroke-dashoffset':'0'
+          });
+          $('#yAxis').animate({
+            'stroke-dashoffset': '0'
+          });
+        }
+        function animate(){
+          for (i=0;i<prices.length;i++){
+            var circ = $('#myCirc'+i);
+            var line = $('#myLine'+i);
+            circ.css({
+              '-webkit-transition':'all 550ms cubic-bezier(.84,0,.2,1)',
+              '-webkit-transition-delay':375+(i*125)+"ms"
+              });
+            line.css({
+              '-webkit-transition':'all 250ms cubic-bezier(.84,0,.2,1)',
+              '-webkit-transition-delay':i*125+"ms"
+              });
+            line.animate({
+              'stroke-dashoffset':0
+            });
+            circ.css({
+              'transform':'scale(1)'
+            });
+          }
+        }
+        $(window).load(function(){
+          draw();
+          animate();
+          $('#myLine1').css({
+            'opacity': '0'
+          });
+        })
+        $('#draw').on('click',function(){
+          $('#svg').empty();
+          draw();
+          animate();
+          $('#myLine1').css({
+            'opacity': '0'
+          });
+        });
+
+    </script>
+  </body>
+</html>

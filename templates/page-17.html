@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="/static/style.css">
+
+    <!-- JS -->
+    <script type="text/javascript" src="{{ url_for('static', filename = 'main.js') }}"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+
+    <title>Dynamic Personas</title>
+
+    <!-- favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/static/img/favicon.ico" />
+
+  </head>
+  <body>
+    <div class="container">
+        <div class="row header">
+            <div class="col-12 col-md-6 text-center pt-50 align-self-center">
+                <div class="page-pointer">
+                  <h3><small>Hover me ↓</small></h3>
+                </div>
+                <div class="parallax-container" >
+                  <div class="chart-base">
+                    <small id="baseText1" class="baseText">Total Charges (Log)</small>
+                    <small id="baseText2" class="baseText">Loyalty in Month (Log)</small>
+                    <small id="baseText3" class="baseText">Package Taken (Log)</small>
+                  </div>
+                  <div class="parallax-base page-17">
+                    <div class="layer-4"></div>
+                  </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 text-center pt-50">
+                <h1 id="Question1"></h1>
+                <p id="coordinate">Your coordinate in the chart is:<br>
+                Total Charges (Log): 7.67<br>
+                Loyalty in Month (Log): 4.29<br>
+                Package Taken (Log): 1.39</p>
+                <p>The new users added in the user pool does not have influence in your persona and coordinate location!</p>
+                <br>
+                <a href="/page-18">Moving on to next question</a>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        const answerQ1 = window.localStorage.getItem("personaPositionQ1");
+        document.getElementById("Question1").innerHTML = "You are " + answerQ1 + "!";
+    </script>
+    <script type="text/javascript">
+        function cssParallax(cont, el, radiusVal){
+          $(cont).mousemove(function(event) {
+              
+              cx = Math.ceil($(window).width() / 2.0);
+              cy = Math.ceil($(window).height() / 2.0);
+              dx = event.pageX - cx;
+              dy = event.pageY - cy;
+              
+              tiltx = (dy / cy);
+              tilty = - (dx / cx);
+              radius = Math.sqrt(Math.pow(tiltx,2) + Math.pow(tilty,2));
+              degree = (radius * radiusVal);
+
+              $(el, cont).css('-webkit-transform','rotate3d(' + tiltx + ', ' + tilty + ', 0, ' + degree + 'deg)');
+              $(el, cont).css('transform','rotate3d(' + tiltx + ', ' + tilty + ', 0, ' + degree + 'deg)');
+          });
+        }
+
+        $(document).ready(function() {
+          cssParallax('.parallax-container', '.parallax-base', 20);
+          cssParallax('.parallax-container.first', '.parallax-base', 20);
+        });
+    </script>
+  </body>
+</html>
